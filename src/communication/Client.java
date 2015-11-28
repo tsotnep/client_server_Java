@@ -13,50 +13,55 @@ public class Client implements Runnable {
 
 	@Override
 	public void run() {
+		String hostName = "127.0.0.1";
+		String portNumbStr = "1234";
+		sendData(hostName, portNumbStr);
+		
+
+	}
+
+	public void sendData(String hostN, String portN) {
 		System.out.println("Client Thread Started...");
 		Socket cSock = null;
 		PrintWriter outPWsock = null;
 		BufferedReader inBRstd = null;
 		BufferedReader inBRsock = null;
 
-		String hostName = "127.0.0.1";
-		String portNumbStr = "1865";
 		int attempts = 3;
-		int portNumber = Integer.parseInt(portNumbStr);
+		int portNumber = Integer.parseInt(portN);
 
 		try {
-			cSock = new Socket(hostName, portNumber);
+			cSock = new Socket(hostN, portNumber);
+			cSock.setSoTimeout(5000);
 			outPWsock = new PrintWriter(cSock.getOutputStream(), true);
 			inBRsock = new BufferedReader(new InputStreamReader(cSock.getInputStream()));
 			inBRstd = new BufferedReader(new InputStreamReader(System.in));
-			
-			System.out.println("type any command to start, note: after that, each side can reply 3 times");
-			outPWsock.println(inBRstd.readLine());// start_conversation
 
-			String receivedData, sendingData;
+			String receivedData;
+			receivedData = inBRsock.readLine();
+			System.out.println("received : " + receivedData);
+			outPWsock.println("Hello IAG0010Server");
+
 			while (((receivedData = inBRsock.readLine()) != null) && (attempts > 0)) {
 				attempts--;
-				System.out.println(" // client. received from server: > " + receivedData);
-				System.out.println(" // client. input text to send");
-				sendingData = inBRstd.readLine();
-				outPWsock.println(sendingData);
+				System.out.println("received::::" + receivedData);
 			}
-
 			System.out.println("client. terminate ");
+
 			try {
 				// Close all the sockets and streams to prevent memory leaks
 				cSock.close();
 				outPWsock.close();
-				// inBRsock.close();
+				inBRsock.close();
 				inBRstd.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} catch (UnknownHostException e) {
-			System.err.println("Don't know about host " + hostName);
+			System.err.println("Don't know about host " + hostN);
 			System.exit(1);
 		} catch (IOException e) {
-			System.err.println("Couldn't get I/O for the connection to " + hostName);
+			System.err.println("Couldn't get I/O for the connection to " + portN);
 			System.exit(1);
 		}
 

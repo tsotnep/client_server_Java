@@ -5,7 +5,7 @@ public class Main {
 		Thread t1 = (new Thread(new Server()));
 		Thread t2 = (new Thread(new Client()));
 
-		t1.start();
+//		t1.start();
 		t2.start();
 
 		try {
@@ -15,6 +15,7 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		try {
 			t1.join();
 			System.out.println("Server Thread Have Ended");

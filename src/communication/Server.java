@@ -36,6 +36,9 @@ public class Server implements Runnable {
 				outPWsock.println(sendingData);
 			}
 			System.out.println("server. terminate ");
+			
+			
+			
 			try {
 				// Close all the sockets and streams to prevent memory leaks
 				sSock.close();
