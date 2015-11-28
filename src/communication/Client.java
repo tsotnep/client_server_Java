@@ -13,50 +13,54 @@ public class Client implements Runnable {
 
 	@Override
 	public void run() {
+		Boolean work = true;
+		String hostName = "127.0.0.1";
+		String portNumbStr = "1867";
+		String data = new String("");
 		System.out.println("Client Thread Started...");
+		BufferedReader inBRstd = new BufferedReader(new InputStreamReader(System.in));
+
+		while (work) {
+			System.out.println("type text that you want to send to server");
+			try {
+				data = inBRstd.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (data.equals("stop")) work = false;
+			
+			sendData(hostName, portNumbStr, data);
+		}
+		System.out.println("client. terminate ");
+
+	}
+
+	public void sendData(String hostN, String portN, String data) {
 		Socket cSock = null;
 		PrintWriter outPWsock = null;
-		BufferedReader inBRstd = null;
-		BufferedReader inBRsock = null;
-
-		String hostName = "127.0.0.1";
-		String portNumbStr = "1865";
-		int attempts = 3;
-		int portNumber = Integer.parseInt(portNumbStr);
+		int portNumber = Integer.parseInt(portN);
 
 		try {
-			cSock = new Socket(hostName, portNumber);
+			cSock = new Socket(hostN, portNumber);
 			outPWsock = new PrintWriter(cSock.getOutputStream(), true);
-			inBRsock = new BufferedReader(new InputStreamReader(cSock.getInputStream()));
-			inBRstd = new BufferedReader(new InputStreamReader(System.in));
-			
-			System.out.println("type any command to start, note: after that, each side can reply 3 times");
-			outPWsock.println(inBRstd.readLine());// start_conversation
 
-			String receivedData, sendingData;
-			while (((receivedData = inBRsock.readLine()) != null) && (attempts > 0)) {
-				attempts--;
-				System.out.println(" // client. received from server: > " + receivedData);
-				System.out.println(" // client. input text to send");
-				sendingData = inBRstd.readLine();
-				outPWsock.println(sendingData);
-			}
+			outPWsock.println(data);
 
-			System.out.println("client. terminate ");
 			try {
 				// Close all the sockets and streams to prevent memory leaks
 				cSock.close();
 				outPWsock.close();
 				// inBRsock.close();
-				inBRstd.close();
 			} catch (IOException e) {
+				System.out.println("CLIENT");
 				e.printStackTrace();
 			}
 		} catch (UnknownHostException e) {
-			System.err.println("Don't know about host " + hostName);
+			System.err.println("Don't know about host " + hostN);
 			System.exit(1);
 		} catch (IOException e) {
-			System.err.println("Couldn't get I/O for the connection to " + hostName);
+			System.err.println("Couldn't get I/O for the connection to " + hostN);
 			System.exit(1);
 		}
 

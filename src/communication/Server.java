@@ -9,15 +9,14 @@ public class Server implements Runnable {
 
 	@Override
 	public void run() {
+		Boolean work = true;
 		System.out.println("Server Thread Started...");
 		ServerSocket sSock = null;
 		Socket cSock = null;
 		PrintWriter outPWsock = null;
-		BufferedReader inBRstd = null;
 		BufferedReader inBRsock = null;
 
-		String portNumStr = "1865";
-		int attempts = 3;
+		String portNumStr = "1867";
 		int portNumber = Integer.parseInt(portNumStr);
 
 		try {
@@ -25,15 +24,13 @@ public class Server implements Runnable {
 			cSock = sSock.accept();
 			outPWsock = new PrintWriter(cSock.getOutputStream(), true);
 			inBRsock = new BufferedReader(new InputStreamReader(cSock.getInputStream()));
-			inBRstd = new BufferedReader(new InputStreamReader(System.in));
 
-			String receivedData, sendingData;
-			while (((receivedData = inBRsock.readLine()) != null) && (attempts > 0)) {
-				attempts--;
-				System.out.println(" // server. received from client: > " + receivedData);
-				System.out.println(" // server. input text to send");
-				sendingData = inBRstd.readLine();
-				outPWsock.println(sendingData);
+			while (work) {
+				String receivedData = inBRsock.readLine();
+				if (receivedData != null) {
+					System.out.println(" // server. received> " + receivedData);
+					if (receivedData.equals("stop")) work = false;
+				}
 			}
 			System.out.println("server. terminate ");
 			try {
