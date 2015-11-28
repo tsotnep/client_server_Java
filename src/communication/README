@@ -1,0 +1,3 @@
+both, client and server are on different threads of one program
+
+example of how it works: http://prntscr.com/97zojb
